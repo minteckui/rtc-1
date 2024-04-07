@@ -1,0 +1,9 @@
+.env
+
+
+server/node_modules
+client/node_modules
+
+
+
+# Ignore any other files or directories specific to your setup
