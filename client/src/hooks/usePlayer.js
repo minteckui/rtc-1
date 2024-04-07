@@ -31,6 +31,16 @@ const usePlayer = (myId, roomId, peer) => {
     socket.emit("user-toggle-audio", myId, roomId);
   };
 
+  const toggleHandRaise = () => {
+    console.log("I toggled my hand Raise");
+    setPlayers((prev) => {
+      const copy = cloneDeep(prev);
+      copy[myId].handRaise = !copy[myId].handRaise;
+      return { ...copy };
+    });
+    socket.emit("user-toggle-hand-raise", myId, roomId);
+  };
+
   const toggleVideo = () => {
     console.log("I toggled my video");
     setPlayers((prev) => {
@@ -41,7 +51,7 @@ const usePlayer = (myId, roomId, peer) => {
     socket.emit("user-toggle-video", myId, roomId);
   };
 
-  return { players, setPlayers, playerHighlighted, nonHighlightedPlayers, toggleAudio, toggleVideo, leaveRoom };
+  return { players, setPlayers, playerHighlighted, nonHighlightedPlayers, toggleAudio, toggleHandRaise,toggleVideo, leaveRoom };
 };
 
 export default usePlayer;

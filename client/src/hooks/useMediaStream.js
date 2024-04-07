@@ -25,17 +25,17 @@ const useMediaStream = () => {
       isStreamSet.current = true;
     }
 
-    // return () => {
-    //   if (mediaStream) {
-    //     mediaStream.getTracks().forEach((track) => {
-    //       track.stop();
-    //       mediaStream.removeTrack(track);
-    //     });
-    //     // Release the reference to the stream
-    //     setStream(null);
-    //     console.log("Stream closed");
-    //   }
-    // };
+    return () => {
+      if (mediaStream) {
+        mediaStream.getTracks().forEach((track) => {
+          track.stop();
+          mediaStream.removeTrack(track);
+        });
+        // Release the reference to the stream
+        setStream(null);
+        console.log("Stream closed");
+      }
+    };
   }, []);
 
   return {

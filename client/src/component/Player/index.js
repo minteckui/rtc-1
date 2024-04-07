@@ -1,37 +1,45 @@
+import React from "react";
 import ReactPlayer from "react-player";
-// import cx from "classnames";
-import MicIcon from "@mui/icons-material/Mic";
-import MicOffIcon from "@mui/icons-material/MicOff";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { Paper } from "@mui/material";
+import { Mic as MicIcon, MicOff as MicOffIcon, AccountCircle as AccountCircleIcon } from "@mui/icons-material";
+import PanToolIcon from "@mui/icons-material/PanTool";
 
-// import styles from "@/component/Player/index.module.css";
+const iconsStyle = {
+  padding: "4px",
+  position: "absolute",
+  borderRadius: "50%",
+  top: 10,
+  right: 10,
+  backgroundColor: "wheat",
+};
 
 const Player = (props) => {
-  const { url, muted, playing, isActive } = props;
-  return (
-    <div
-      style={{ position: "relative" }}
+  const { url, muted, playing, isActive, handRaise } = props;
 
-      // className={cx(styles.playerContainer, {
-      //   [styles.notActive]: !isActive,
-      //   [styles.active]: isActive,
-      //   [styles.notPlaying]: !playing,
-      // })}
-    >
+  return (
+    <Paper
+      style={{
+        position: "relative",
+        marginBottom: 16,
+        textAlign: "center",
+        height: isActive ? "90vh" : 200,
+        backgroundColor: "#272727",
+      }}>
       {playing ? (
-        <ReactPlayer url={url} muted={muted} playing={playing} width="100%" height={isActive ? 600 : 280} />
+        <ReactPlayer url={url} muted={muted} playing={playing} width="100%" height="100%" />
       ) : (
-        <AccountCircleIcon style={{ fontSize: isActive ? "600px" : 150 }} />
+        <AccountCircleIcon sx={{ fontSize: isActive ? 400 : 100, color: "gray", marginTop: "auto", height: "100%" }} />
       )}
 
       {!isActive ? (
         muted ? (
-          <MicOffIcon fontSize="small" style={{ position: "absolute", top: 10, backgroundColor: "wheat" }} />
+          <MicOffIcon fontSize="small" sx={iconsStyle} />
         ) : (
-          <MicIcon fontSize="small" style={{ position: "absolute", top: 10, backgroundColor: "wheat" }} />
+          <MicIcon fontSize="small" sx={iconsStyle} />
         )
-      ) : undefined}
-    </div>
+      ) : null}
+      {!isActive && handRaise && <PanToolIcon fontSize="small" sx={{ ...iconsStyle, left: 10 }} />}
+    </Paper>
   );
 };
 

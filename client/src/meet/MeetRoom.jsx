@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { cloneDeep } from "lodash";
 
 //MUI
-import { Grid, Container } from "@mui/material";
+import { Grid, Box, CircularProgress, Typography } from "@mui/material";
 
 import { useSocket } from "../context";
 import usePeer from "../hooks/usePeer";
@@ -18,7 +18,7 @@ const MeetRoom = () => {
   const { roomId } = useParams();
   const { peer, myId } = usePeer();
   const { stream } = useMediaStream();
-  const { players, setPlayers, playerHighlighted, nonHighlightedPlayers, toggleAudio, toggleVideo, leaveRoom } =
+  const { players, setPlayers, playerHighlighted, nonHighlightedPlayers, toggleAudio, toggleHandRaise,toggleVideo, leaveRoom } =
     usePlayer(myId, roomId, peer);
 
   const [users, setUsers] = useState([]);
@@ -38,6 +38,7 @@ const MeetRoom = () => {
             url: incomingStream,
             muted: true,
             playing: true,
+            handRaise:false
           },
         }));
 
@@ -74,6 +75,16 @@ const MeetRoom = () => {
       });
     };
 
+
+    const handleHandRaise = (userId) => {
+      console.log(`user with id ${userId} hand raised`);
+      setPlayers((prev) => {
+        const copy = cloneDeep(prev);
+        copy[userId].handRaise = !copy[userId].handRaise;
+        return { ...copy };
+      });
+    };
+
     const handleUserLeave = (userId) => {
       console.log(`user ${userId} is leaving the room`);
       users[userId]?.close();
@@ -81,12 +92,15 @@ const MeetRoom = () => {
       delete playersCopy[userId];
       setPlayers(playersCopy);
     };
+
     socket.on("user-toggle-audio", handleToggleAudio);
     socket.on("user-toggle-video", handleToggleVideo);
+    socket.on("user-toggle-hand-raise", handleHandRaise);
     socket.on("user-leave", handleUserLeave);
     return () => {
       socket.off("user-toggle-audio", handleToggleAudio);
       socket.off("user-toggle-video", handleToggleVideo);
+      socket.off("user-toggle-hand-raise", handleHandRaise);
       socket.off("user-leave", handleUserLeave);
     };
   }, [players, setPlayers, socket, users]);
@@ -105,6 +119,7 @@ const MeetRoom = () => {
             url: incomingStream,
             muted: true,
             playing: true,
+            handRaise: false,
           },
         }));
 
@@ -125,43 +140,58 @@ const MeetRoom = () => {
         url: stream,
         muted: true,
         playing: true,
+        handRaise:false
       },
     }));
   }, [myId, setPlayers, stream]);
 
   return (
-    <Container maxWidth="lg">
-      <Grid container spacing={1}>
+    <Box display="flex" justifyContent="center">
+      <Grid container spacing={2}>
         <Grid item xs={8}>
-          {playerHighlighted && (
-            <div style={{ position: "relative" }}>
-              <Player
-                url={playerHighlighted.url}
-                muted={playerHighlighted.muted}
-                playing={playerHighlighted.playing}
-                isActive
-              />
-              <Bottom
-                muted={playerHighlighted.muted}
-                playing={playerHighlighted.playing}
-                toggleAudio={toggleAudio}
-                toggleVideo={toggleVideo}
-                leaveRoom={leaveRoom}
-              />
-            </div>
-          )}
+          <Typography color="white" variant="h5" gutterBottom>
+            Main Video
+          </Typography>
+          <Box>
+            {playerHighlighted ? (
+              <div style={{ position: "relative" }}>
+                <Player
+                  url={playerHighlighted.url}
+                  muted={playerHighlighted.muted}
+                  playing={playerHighlighted.playing}
+                  handRaise={playerHighlighted.handRaise}
+                  isActive
+                />
+                <Bottom
+                  muted={playerHighlighted.muted}
+                  playing={playerHighlighted.playing}
+                  handRaise={playerHighlighted.handRaise}
+                  toggleHandRaise={toggleHandRaise}
+                  toggleAudio={toggleAudio}
+                  toggleVideo={toggleVideo}
+                  leaveRoom={leaveRoom}
+                />
+              </div>
+            ) : (
+              <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: 400 }}>
+                <CircularProgress />
+              </Box>
+            )}
+          </Box>
         </Grid>
-        <Grid item  xs={4}>
-          <div style={{ height: "100%", overflow: "auto", border: "1px solid" }}>
+        <Grid item xs={4}>
+          <Typography variant="h5" gutterBottom color="whitesmoke">
+            Other Participants
+          </Typography>
+          <div style={{ height: "calc(100vh - 80px)", overflow: "auto" }}>
             {Object.keys(nonHighlightedPlayers).map((playerId) => {
-              const { url, muted, playing } = nonHighlightedPlayers[playerId];
-              return <Player key={playerId} url={url} muted={muted} playing={playing} isActive={false} />;
+              const { url, muted, playing,handRaise } = nonHighlightedPlayers[playerId];
+              return <Player key={playerId} url={url} muted={muted} playing={playing} handRaise={handRaise} isActive={false} />;
             })}
           </div>
         </Grid>
-        {/* <CopySection roomId={roomId} /> */}
       </Grid>
-    </Container>
+    </Box>
   );
 };
 

@@ -24,6 +24,11 @@ io.on('connection', (socket) => {
       socket.broadcast.to(roomId).emit('user-toggle-video', userId)
   })
 
+  socket.on('user-toggle-hand-raise', (userId, roomId) => {
+    socket.join(roomId)
+    socket.broadcast.to(roomId).emit('user-toggle-hand-raise', userId)
+})
+
   socket.on('user-leave', (userId, roomId) => {
       socket.join(roomId)
       socket.broadcast.to(roomId).emit('user-leave', userId)
