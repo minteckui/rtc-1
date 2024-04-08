@@ -33,6 +33,11 @@ io.on('connection', (socket) => {
       socket.join(roomId)
       socket.broadcast.to(roomId).emit('user-leave', userId)
   })
+
+  // socket.on('start-video-recording', (userId, roomId) => {
+  //   socket.join(roomId)
+  //   socket.broadcast.to(roomId).emit('user-leave', userId)
+  // })
 })
 
 

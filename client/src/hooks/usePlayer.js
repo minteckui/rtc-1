@@ -12,6 +12,8 @@ const usePlayer = (myId, roomId, peer) => {
   const playerHighlighted = playersCopy[myId];
   delete playersCopy[myId];
 
+  console.log(players)
+
   const nonHighlightedPlayers = playersCopy;
 
   const leaveRoom = () => {

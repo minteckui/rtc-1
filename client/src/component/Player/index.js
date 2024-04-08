@@ -1,7 +1,7 @@
 import React from "react";
 import ReactPlayer from "react-player";
 import { Paper } from "@mui/material";
-import { Mic as MicIcon, MicOff as MicOffIcon, AccountCircle as AccountCircleIcon } from "@mui/icons-material";
+import { Mic, MicOff, AccountCircle } from "@mui/icons-material";
 import PanToolIcon from "@mui/icons-material/PanTool";
 
 const iconsStyle = {
@@ -28,14 +28,14 @@ const Player = (props) => {
       {playing ? (
         <ReactPlayer url={url} muted={muted} playing={playing} width="100%" height="100%" />
       ) : (
-        <AccountCircleIcon sx={{ fontSize: isActive ? 400 : 100, color: "gray", marginTop: "auto", height: "100%" }} />
+        <AccountCircle sx={{ fontSize: isActive ? 400 : 100, color: "gray", marginTop: "auto", height: "100%" }} />
       )}
 
       {!isActive ? (
         muted ? (
-          <MicOffIcon fontSize="small" sx={iconsStyle} />
+          <MicOff fontSize="small" sx={iconsStyle} />
         ) : (
-          <MicIcon fontSize="small" sx={iconsStyle} />
+          <Mic fontSize="small" sx={iconsStyle} />
         )
       ) : null}
       {!isActive && handRaise && <PanToolIcon fontSize="small" sx={{ ...iconsStyle, left: 10 }} />}

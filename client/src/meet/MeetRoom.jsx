@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { cloneDeep } from "lodash";
 
 //MUI
-import { Grid, Box, CircularProgress, Typography } from "@mui/material";
+import { Grid, Box, Typography } from "@mui/material";
+import { AccountCircle } from "@mui/icons-material";
 
 import { useSocket } from "../context";
 import usePeer from "../hooks/usePeer";
@@ -18,17 +19,44 @@ const MeetRoom = () => {
   const { roomId } = useParams();
   const { peer, myId } = usePeer();
   const { stream } = useMediaStream();
-  const { players, setPlayers, playerHighlighted, nonHighlightedPlayers, toggleAudio, toggleHandRaise,toggleVideo, leaveRoom } =
-    usePlayer(myId, roomId, peer);
+  const {
+    players,
+    setPlayers,
+    playerHighlighted,
+    nonHighlightedPlayers,
+    toggleAudio,
+    toggleHandRaise,
+    toggleVideo,
+    leaveRoom,
+  } = usePlayer(myId, roomId, peer);
 
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    if (!socket || !peer || !stream) return;
+    if (!socket || !peer) return;
     const handleUserConnected = (newUser) => {
       console.log(`user connected in room with userId ${newUser}`);
 
       const call = peer.call(newUser, stream);
+      if (call) {
+        call.on("stream", (incomingStream) => {
+          console.log(`incoming stream from ${newUser}`);
+          setPlayers((prev) => ({
+            ...prev,
+            [newUser]: {
+              url: incomingStream,
+              muted: true,
+              playing: true,
+              handRaise: false,
+            },
+          }));
+
+          setUsers((prev) => ({
+            ...prev,
+            [newUser]: call,
+          }));
+        });
+      }
 
       call.on("stream", (incomingStream) => {
         console.log(`incoming stream from ${newUser}`);
@@ -38,7 +66,7 @@ const MeetRoom = () => {
             url: incomingStream,
             muted: true,
             playing: true,
-            handRaise:false
+            handRaise: false,
           },
         }));
 
@@ -61,8 +89,12 @@ const MeetRoom = () => {
       console.log(`user with id ${userId} toggled audio`);
       setPlayers((prev) => {
         const copy = cloneDeep(prev);
-        copy[userId].muted = !copy[userId].muted;
-        return { ...copy };
+        if (copy[userId]) {
+          copy[userId].muted = !copy[userId].muted;
+          return { ...copy };
+        } else {
+          return prev;
+        }
       });
     };
 
@@ -70,18 +102,26 @@ const MeetRoom = () => {
       console.log(`user with id ${userId} toggled video`);
       setPlayers((prev) => {
         const copy = cloneDeep(prev);
-        copy[userId].playing = !copy[userId].playing;
-        return { ...copy };
+        if (copy[userId]) {
+          copy[userId].playing = !copy[userId].playing;
+          return { ...copy };
+        } else {
+          return prev;
+        }
       });
     };
 
-
     const handleHandRaise = (userId) => {
       console.log(`user with id ${userId} hand raised`);
+
       setPlayers((prev) => {
         const copy = cloneDeep(prev);
-        copy[userId].handRaise = !copy[userId].handRaise;
-        return { ...copy };
+        if (copy[userId]) {
+          copy[userId].handRaise = !copy[userId].handRaise;
+          return { ...copy };
+        } else {
+          return prev;
+        }
       });
     };
 
@@ -97,50 +137,55 @@ const MeetRoom = () => {
     socket.on("user-toggle-video", handleToggleVideo);
     socket.on("user-toggle-hand-raise", handleHandRaise);
     socket.on("user-leave", handleUserLeave);
+    // socket.on("start-video-recording", startRecording);
+    // socket.on("stop-video-recording", stopRecording);
     return () => {
       socket.off("user-toggle-audio", handleToggleAudio);
       socket.off("user-toggle-video", handleToggleVideo);
       socket.off("user-toggle-hand-raise", handleHandRaise);
       socket.off("user-leave", handleUserLeave);
+      // socket.off("start-video-recording", startRecording);
+      // socket.off("stop-video-recording", stopRecording);
     };
   }, [players, setPlayers, socket, users]);
 
   useEffect(() => {
-    if (!peer || !stream) return;
+    if (!peer) return;
     peer.on("call", (call) => {
       const { peer: callerId } = call;
       call.answer(stream);
+      if (call) {
+        call.on("stream", (incomingStream) => {
+          console.log(`incoming stream from ${callerId}`);
+          setPlayers((prev) => ({
+            ...prev,
+            [callerId]: {
+              url: incomingStream,
+              muted: true,
+              playing: true,
+              handRaise: false,
+            },
+          }));
 
-      call.on("stream", (incomingStream) => {
-        console.log(`incoming stream from ${callerId}`);
-        setPlayers((prev) => ({
-          ...prev,
-          [callerId]: {
-            url: incomingStream,
-            muted: true,
-            playing: true,
-            handRaise: false,
-          },
-        }));
-
-        setUsers((prev) => ({
-          ...prev,
-          [callerId]: call,
-        }));
-      });
+          setUsers((prev) => ({
+            ...prev,
+            [callerId]: call,
+          }));
+        });
+      }
     });
   }, [peer, setPlayers, stream]);
 
   useEffect(() => {
-    if (!stream || !myId) return;
+    if (!myId) return;
     console.log(`setting my stream ${myId}`);
     setPlayers((prev) => ({
       ...prev,
       [myId]: {
-        url: stream,
+        url: stream || "",
         muted: true,
-        playing: true,
-        handRaise:false
+        playing: !!stream,
+        handRaise: false,
       },
     }));
   }, [myId, setPlayers, stream]);
@@ -173,8 +218,23 @@ const MeetRoom = () => {
                 />
               </div>
             ) : (
-              <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: 400 }}>
-                <CircularProgress />
+              <Box
+                sx={{
+                  display: "flex",
+                  color: "white",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: 400,
+                }}
+              >
+                <AccountCircle
+                  sx={{
+                    fontSize: 400,
+                    color: "gray",
+                    marginTop: "auto",
+                    height: "100%",
+                  }}
+                />
               </Box>
             )}
           </Box>
@@ -185,8 +245,18 @@ const MeetRoom = () => {
           </Typography>
           <div style={{ height: "calc(100vh - 80px)", overflow: "auto" }}>
             {Object.keys(nonHighlightedPlayers).map((playerId) => {
-              const { url, muted, playing,handRaise } = nonHighlightedPlayers[playerId];
-              return <Player key={playerId} url={url} muted={muted} playing={playing} handRaise={handRaise} isActive={false} />;
+              const { url, muted, playing, handRaise } =
+                nonHighlightedPlayers[playerId];
+              return (
+                <Player
+                  key={playerId}
+                  url={url}
+                  muted={muted}
+                  playing={playing}
+                  handRaise={handRaise}
+                  isActive={false}
+                />
+              );
             })}
           </div>
         </Grid>

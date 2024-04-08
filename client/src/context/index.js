@@ -8,7 +8,7 @@ export const useSocket = () => {
   return socket
 }
 
-const socket = io('http://localhost:8000'); // Replace with your server URL
+const socket = io('http://172.16.68.224:8000'); // Replace with your server URL
 
 export const SocketProvider = ({ children }) => {
   return <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>;
