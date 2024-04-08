@@ -45,60 +45,85 @@ const useMediaStream = () => {
 export default useMediaStream;
 
 
-// let mediaRecorder;
-// const chunks =[];
+export const useVideoRecorder = () => {
+  const [mediaRecorder, setMediaRecorder] = useState(null);
+  const [chunks, setChunks] = useState([]);
+  const [isRecording, setIsRecording] = useState(false);
 
-// export async function startRecording(userId, roomId, socket) {
-//   try {
-//     const screenStream = await navigator.mediaDevices.getUserMedia({
-//       video: {
-//         width: 1920,
-//         height: 1080,
-//       },
-//       audio: false,
-//     });
-//     const stream = new MediaStream([...screenStream.getTracks()]);
-//     mediaRecorder = new MediaRecorder(stream);
-//     mediaRecorder.start();
+  // useEffect(() => {
+  //   return () => {
+  //     if (mediaRecorder) {
+  //       mediaRecorder.getTracks().forEach((track) => {
+  //         track.stop();
+  //         mediaRecorder.removeTrack(track);
+  //       });
+  //       // Release the reference to the stream
+  //       setMediaRecorder(null);
+  //       console.log("recorder stream closed");
+  //     }
+  //   };
+  // }, [mediaRecorder]);
 
-//     mediaRecorder.ondataavailable = function (e) {
-//       chunks.push(e.data);
-//     };
+  async function initRecording() {
 
-//     mediaRecorder.onstop = function (e) {
-//       const blob = new Blob(chunks, {
-//         type: "video/webm",
-//       });
+    if (mediaRecorder && isRecording) {
+      mediaRecorder.stop();
+      setIsRecording(false);
+      return;
+    }
 
-//       const formData = new FormData();
-//       formData.append("file", blob);
+    try {
+      const screenStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          width: 1920,
+          height: 1080,
+        },
+        audio: false,
+      });
+      const stream = new MediaStream([...screenStream.getTracks()]);
+      const recorder = new MediaRecorder(stream);
 
-//       // Send recorded data to the server
-//       fetch("http://localhost:5000/upload", {
-//         method: "POST",
-//         body: formData,
-//       })
-//         .then((response) => response.text())
-//         .then((result) => {
-//           console.log(result);
-//         })
-//         .catch((error) => {
-//           console.error("Error:", error);
-//         });
-//     };
+      recorder.ondataavailable = (e) => {
+        console.log(e.data);
+        setChunks((prevChunks) => [...prevChunks, e.data]);
+      };
 
-//     // Emit event to the server indicating start of recording
-//     socket.emit("start-video-recording", userId, roomId);
+      recorder.onstop = () => {
+        setIsRecording(false);
+        const blob = new Blob(chunks, {
+          type: 'video/webm',
+        });
 
-//     // Rest of your recording logic...
-//   } catch (error) {
-//     console.log(error);
-//     alert(error);
-//   }
-// }
+        const formData = new FormData();
+        formData.append('file', blob);
+
+        // Send recorded data to the server
+        fetch('http://localhost:8001/upload', {
+          method: 'POST',
+          body: formData,
+        })
+          .then((response) => response.text())
+          .then((result) => {
+            console.log(result);
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
+      };
+
+      setMediaRecorder(recorder);
+      setIsRecording(true);
+      recorder.start();
+    } catch (error) {
+      console.log(error);
+      alert(error);
+    }
+  };
+  return { initRecording, isRecording };
+};
 
 
-// export  function stopRecording (){
-//   mediaRecorder.stop();
-// }
+
+
+
 

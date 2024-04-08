@@ -7,7 +7,7 @@ import { AccountCircle } from "@mui/icons-material";
 
 import { useSocket } from "../context";
 import usePeer from "../hooks/usePeer";
-import useMediaStream from "../hooks/useMediaStream";
+import useMediaStream, { useVideoRecorder} from "../hooks/useMediaStream";
 import usePlayer from "../hooks/usePlayer";
 
 import Player from "../component/Player";
@@ -19,6 +19,7 @@ const MeetRoom = () => {
   const { roomId } = useParams();
   const { peer, myId } = usePeer();
   const { stream } = useMediaStream();
+  const { initRecording, isRecording } = useVideoRecorder();
   const {
     players,
     setPlayers,
@@ -28,6 +29,7 @@ const MeetRoom = () => {
     toggleHandRaise,
     toggleVideo,
     leaveRoom,
+    toggleRecording,
   } = usePlayer(myId, roomId, peer);
 
   const [users, setUsers] = useState([]);
@@ -56,25 +58,25 @@ const MeetRoom = () => {
             [newUser]: call,
           }));
         });
+
+        call.on("stream", (incomingStream) => {
+          console.log(`incoming stream from ${newUser}`);
+          setPlayers((prev) => ({
+            ...prev,
+            [newUser]: {
+              url: incomingStream,
+              muted: true,
+              playing: true,
+              handRaise: false,
+            },
+          }));
+
+          setUsers((prev) => ({
+            ...prev,
+            [newUser]: call,
+          }));
+        });
       }
-
-      call.on("stream", (incomingStream) => {
-        console.log(`incoming stream from ${newUser}`);
-        setPlayers((prev) => ({
-          ...prev,
-          [newUser]: {
-            url: incomingStream,
-            muted: true,
-            playing: true,
-            handRaise: false,
-          },
-        }));
-
-        setUsers((prev) => ({
-          ...prev,
-          [newUser]: call,
-        }));
-      });
     };
     socket.on("user-connected", handleUserConnected);
 
@@ -137,17 +139,15 @@ const MeetRoom = () => {
     socket.on("user-toggle-video", handleToggleVideo);
     socket.on("user-toggle-hand-raise", handleHandRaise);
     socket.on("user-leave", handleUserLeave);
-    // socket.on("start-video-recording", startRecording);
-    // socket.on("stop-video-recording", stopRecording);
+    socket.on("toggle-video-recording", initRecording);
     return () => {
       socket.off("user-toggle-audio", handleToggleAudio);
       socket.off("user-toggle-video", handleToggleVideo);
       socket.off("user-toggle-hand-raise", handleHandRaise);
       socket.off("user-leave", handleUserLeave);
-      // socket.off("start-video-recording", startRecording);
-      // socket.off("stop-video-recording", stopRecording);
+      socket.off("toggle-video-recording", initRecording);
     };
-  }, [players, setPlayers, socket, users]);
+  }, [players, setPlayers, socket, initRecording, users]);
 
   useEffect(() => {
     if (!peer) return;
@@ -255,6 +255,8 @@ const MeetRoom = () => {
                   playing={playing}
                   handRaise={handRaise}
                   isActive={false}
+                  toggleRecording={() => toggleRecording(playerId)}
+                  isRecording={isRecording}
                 />
               );
             })}

@@ -1,7 +1,7 @@
 import React from "react";
 import ReactPlayer from "react-player";
 import { Paper } from "@mui/material";
-import { Mic, MicOff, AccountCircle } from "@mui/icons-material";
+import { Mic, MicOff, AccountCircle, RecordVoiceOver } from "@mui/icons-material";
 import PanToolIcon from "@mui/icons-material/PanTool";
 
 const iconsStyle = {
@@ -14,7 +14,7 @@ const iconsStyle = {
 };
 
 const Player = (props) => {
-  const { url, muted, playing, isActive, handRaise } = props;
+  const { url, muted, playing, isActive, handRaise, toggleRecording, isRecording } = props;
 
   return (
     <Paper
@@ -39,6 +39,7 @@ const Player = (props) => {
         )
       ) : null}
       {!isActive && handRaise && <PanToolIcon fontSize="small" sx={{ ...iconsStyle, left: 10 }} />}
+      {!isActive ? !isRecording ? <RecordVoiceOver color="primary" onClick={toggleRecording} fontSize="small" sx={{ ...iconsStyle, left: 0, bottom: 0, right: 0, margin: 'auto', top: 'inherit' }} /> : <RecordVoiceOver color="error" onClick={toggleRecording} fontSize="small" sx={{ ...iconsStyle, left: 0, bottom: 0, right: 0, margin: 'auto', top: 'inherit' }} /> : null}
     </Paper>
   );
 };

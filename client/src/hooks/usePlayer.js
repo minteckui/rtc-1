@@ -3,7 +3,7 @@ import { cloneDeep } from "lodash";
 import { useSocket } from "../context";
 import { useNavigate } from "react-router-dom";
 
-const usePlayer = (myId, roomId, peer) => {
+const usePlayer = (myId, roomId, peer, ) => {
   const socket = useSocket();
   const [players, setPlayers] = useState({});
   const navigate = useNavigate();
@@ -53,7 +53,12 @@ const usePlayer = (myId, roomId, peer) => {
     socket.emit("user-toggle-video", myId, roomId);
   };
 
-  return { players, setPlayers, playerHighlighted, nonHighlightedPlayers, toggleAudio, toggleHandRaise,toggleVideo, leaveRoom };
+  const toggleRecording = (playerId) => {
+    console.log("i toggle video recording from", myId);
+    socket.emit("toggle-video-recording", myId, roomId, playerId);
+  };
+
+  return { players, setPlayers, playerHighlighted, nonHighlightedPlayers, toggleAudio, toggleHandRaise, toggleVideo, leaveRoom, toggleRecording };
 };
 
 export default usePlayer;

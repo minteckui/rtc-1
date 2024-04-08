@@ -62,7 +62,7 @@ export default function MeetLobby() {
           Video Call
         </Typography>
         <EnterRoomContainer>
-          <InputField placeholder="Enter Room ID" value={roomId} onChange={(e) => setRoomId(e.target.value)} />
+          <InputField placeholder="Enter Meeting ID" value={roomId} onChange={(e) => setRoomId(e.target.value)} />
           <JoinRoomButton variant="contained" onClick={joinRoom}>
             Join Room
           </JoinRoomButton>
