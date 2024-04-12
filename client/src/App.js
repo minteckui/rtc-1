@@ -9,32 +9,32 @@ import MeetRoom from "./meet/MeetRoom";
 import IPCamera from "./ipcamera";
 import { ThemeProvider, createTheme } from "@mui/material";
 
-  const theme = createTheme({
-    palette:{
-      mode:'dark'
-    },
-    components:{
-      MuiButton:{
-        defaultProps:{
-          size:'small'
+const theme = createTheme({
+  palette: {
+    mode: "dark",
+  },
+  components: {
+    MuiButton: {
+      defaultProps: {
+        size: "small",
+      },
+      styleOverrides: {
+        root: {
+          minWidth: 45,
         },
-        styleOverrides:{
-          root:{
-            minWidth:45
-          }
-        }
-      }
-    }
-  })
+      },
+    },
+  },
+});
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
-       {/* <IPCamera /> */}
-    <Routes>
+      <IPCamera />
+      {/* <Routes>
       <Route path="/" element={<MeetLobby />} />
       <Route path="/:roomId" element={<MeetRoom />} />
-    </Routes>
+    </Routes> */}
     </ThemeProvider>
   );
 }

@@ -10,8 +10,10 @@ import {
   ListItem,
   ListItemText,
   Button,
+  Typography,
+  ListItemIcon,
 } from "@mui/material";
-import { Menu, ChevronLeft } from "@mui/icons-material";
+import { Menu, ChevronLeft, Videocam } from "@mui/icons-material";
 import CameraPlayerList from "./CameraPlayerList";
 
 const drawerWidth = 240;
@@ -53,13 +55,18 @@ export default function IPCamera() {
   const [selectedCam, setSelectedCam] = useState([]);
 
   const items = [
-    { id: 1, primary: "Cam-1", secondary: "Store Room" },
-    { id: 2, primary: "Cam-2", secondary: "Lobby" },
-    { id: 3, primary: "Cam-3", secondary: "A Room" },
-    { id: 4, primary: "Cam-4", secondary: "B Room" },
-    { id: 5, primary: "Cam-5", secondary: "13B" },
-    { id: 6, primary: "Cam-6", secondary: "45A" },
-    { id: 7, primary: "Cam-7", secondary: "874We" },
+    {
+      id: 1,
+      title: "Cam-1",
+      location: "Store Room",
+      url: "http://example.com",
+    },
+    { id: 2, title: "Cam-2", location: "Lobby", url: "http://example.com" },
+    { id: 3, title: "Cam-3", location: "A Room", url: "http://example.com" },
+    { id: 4, title: "Cam-4", location: "B Room", url: "http://example.com" },
+    { id: 5, title: "Cam-5", location: "13B", url: "http://example.com" },
+    { id: 6, title: "Cam-6", location: "45A", url: "http://example.com" },
+    { id: 7, title: "Cam-7", location: "874We", url: "http://example.com" },
   ];
 
   const handleToggle = (value) => () => {
@@ -125,12 +132,24 @@ export default function IPCamera() {
               key={item.id}
               style={{ borderBottom: "1px solid #ffffff1f", paddingBlock: 0 }}
             >
+              <ListItemIcon style={{ minWidth: 36 }}>
+                <Videocam color="info" />
+              </ListItemIcon>
               <ListItemText
-                id={`switch-list-label-${item.id}`}
-                primary={item.primary}
-                secondary={item.secondary}
+                style={{ paddingBlock: 0 }}
+                primary={
+                  <Typography variant="subtitle1" color="salmon">
+                    {item.title}
+                  </Typography>
+                }
+                secondary={
+                  <Typography variant="caption" color="primary">
+                    {item.location}
+                  </Typography>
+                }
               />
               <Switch
+                size="small"
                 edge="end"
                 onChange={handleToggle(item.id)}
                 checked={selectedCam.indexOf(item.id) !== -1}

@@ -1,23 +1,51 @@
 import { useState } from "react";
 import { ClickAwayListener } from "@mui/base/ClickAwayListener";
-import { Typography, Paper,  Popper, IconButton } from "@mui/material";
+import { Typography, Paper, Popper, IconButton } from "@mui/material";
+import { MoreVert } from "@mui/icons-material";
 import CameraPlayer from "./CameraPlayer";
 import ControlPanel from "./Controls";
-import { MoreVert } from "@mui/icons-material";
 
 export default function CameraPlayerList({ selectedCam }) {
   let height = 800;
   let width = 1050;
   let camLength = selectedCam?.length;
 
-  function onControlClick(...params) {
-    console.log(params);
-  }
+  const onControlClick = (cam, action) => {
+    console.log(cam, action);
+    switch (action) {
+      case "up":
+        // Handle up action
+        break;
+      case "down":
+        // Handle down action
+        break;
+      case "left":
+        // Handle left action
+        break;
+      case "right":
+        // Handle right action
+        break;
+      case "center":
+        // Handle center action
+        break;
+      case "rotateLeft":
+        // Handle rotate left action
+        break;
+      case "rotateRight":
+        // Handle rotate right action
+        break;
+      case "zoomIn":
+        // Handle zoom in action
+        break;
+      case "zoomOut":
+        // Handle zoom out action
+        break;
+      default:
+        break;
+    }
+  };
 
   if (camLength >= 2) {
-    height = 400;
-    width = 500;
-  } else if (camLength >= 4) {
     height = 400;
     width = 500;
   }
@@ -48,7 +76,7 @@ export default function CameraPlayerList({ selectedCam }) {
             placeContent: "center",
           }}
         >
-          <CameraPlayer height={height} width={width} />
+          <CameraPlayer height={height} width={width} cam={selectedCam[0]} />
           <ControlPanel onControlClick={onControlClick} cam={selectedCam[0]} />
         </div>
       </Paper>
@@ -72,7 +100,7 @@ export default function CameraPlayerList({ selectedCam }) {
       >
         {selectedCam.map((cam, _) => (
           <div key={cam.id} style={{ position: "relative" }}>
-            <CameraPlayer height={height} width={width} />
+            <CameraPlayer height={height} width={width} cam={selectedCam[0]} />
             <ControlPopper onControlClick={onControlClick} cam={cam} />
           </div>
         ))}
