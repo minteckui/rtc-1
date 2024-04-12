@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ClickAwayListener } from "@mui/base/ClickAwayListener";
-import { Typography, Paper, Box, Popper, IconButton } from "@mui/material";
+import { Typography, Paper,  Popper, IconButton } from "@mui/material";
 import CameraPlayer from "./CameraPlayer";
 import ControlPanel from "./Controls";
 import { MoreVert } from "@mui/icons-material";

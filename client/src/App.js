@@ -7,10 +7,31 @@ import { Routes, Route } from "react-router-dom";
 import MeetLobby from "./meet/MeetLobby";
 import MeetRoom from "./meet/MeetRoom";
 import IPCamera from "./ipcamera";
+import { ThemeProvider, createTheme } from "@mui/material";
+
+  const theme = createTheme({
+    palette:{
+      mode:'dark'
+    },
+    components:{
+      MuiButton:{
+        defaultProps:{
+          size:'small'
+        },
+        styleOverrides:{
+          root:{
+            minWidth:45
+          }
+        }
+      }
+    }
+  })
 
 function App() {
   return (
-    <IPCamera />
+    <ThemeProvider theme={theme}>
+      <IPCamera />
+    </ThemeProvider>
     // <Routes>
     //   <Route path="/" element={<MeetLobby />} />
     //   <Route path="/:roomId" element={<MeetRoom />} />

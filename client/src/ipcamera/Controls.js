@@ -1,5 +1,5 @@
 import React from "react";
-import { IconButton, Grid, Divider } from "@mui/material";
+import { IconButton, Divider, Button } from "@mui/material";
 import {
   ArrowRight,
   ArrowLeft,
@@ -13,102 +13,114 @@ import {
 } from "@mui/icons-material";
 
 const iconButtonZoomStyle = { backgroundColor: "#ffcfcf", margin: 4 };
-const iconButtonJoyStickStyle = { backgroundColor: "#e0efff", margin: 1 };
+const iconButtonJoyStickStyle = { backgroundColor: "#2d82dd", margin: 1 };
 const iconButtonTiltStyle = { backgroundColor: "#f2ffcd", margin: 4 };
 
-const ControlPanel = ({ onControlClick,cam}) => {
-    console.log(cam, 'from ====== control pannel')
+const ControlPanel = ({ onControlClick, cam }) => {
+  console.log(cam, "from ====== control pannel");
   return (
-    <Grid
-      container
-      direction="column"
-      alignItems="center"
+    <div
       style={{
-        border: "1px solid lightgrey",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
         borderRadius: 4,
-        padding:4,
-        backgroundColor: "#ffffff9e",
+        padding: 4,
+        backgroundColor: "#4242429e",
       }}
     >
-      <IconButton
-        onClick={() => onControlClick(cam,"up")}
+      <Button
+        onClick={() => onControlClick(cam, "up")}
         color="primary"
         style={iconButtonJoyStickStyle}
       >
         <ArrowDropUp />
-      </IconButton>
-      <Grid
-        container
-        direction="row"
-        alignItems="center"
-        justifyContent="center"
+      </Button>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
       >
-        <IconButton
+        <Button
           style={iconButtonJoyStickStyle}
           color="primary"
-          onClick={() => onControlClick(cam,"left")}
+          onClick={() => onControlClick(cam, "left")}
         >
           <ArrowLeft />
-        </IconButton>
-        <IconButton
-          color="secondary"
+        </Button>
+        <Button
+          color="warning"
           style={iconButtonJoyStickStyle}
-          onClick={() => onControlClick(cam,"center")}
+          onClick={() => onControlClick(cam, "center")}
         >
           <CenterFocusStrong />
-        </IconButton>
-        <IconButton
+        </Button>
+        <Button
           style={iconButtonJoyStickStyle}
           color="primary"
-          onClick={() => onControlClick(cam,"right")}
+          onClick={() => onControlClick(cam, "right")}
         >
           <ArrowRight />
-        </IconButton>
-      </Grid>
-      <IconButton
+        </Button>
+      </div>
+      <Button
         style={iconButtonJoyStickStyle}
         color="primary"
-        onClick={() => onControlClick(cam,"down")}
+        onClick={() => onControlClick(cam, "down")}
       >
         <ArrowDropDown />
-      </IconButton>
+      </Button>
       <Divider style={{ marginBlock: 8 }} flexItem />
-      <Grid
-        container
-        direction="row"
-        alignItems="center"
-        justify="space-between"
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
       >
-        <IconButton
-          style={iconButtonZoomStyle}
-          color="error"
-          onClick={() => onControlClick(cam,"zoomIn")}
-        >
-          <ZoomIn />
-        </IconButton>
         <IconButton
           style={iconButtonTiltStyle}
           color="success"
-          onClick={() => onControlClick(cam,"rotateLeft")}
+          onClick={() => onControlClick(cam, "rotateLeft")}
         >
           <RotateLeft />
         </IconButton>
         <IconButton
           style={iconButtonTiltStyle}
           color="success"
-          onClick={() => onControlClick(cam,"rotateRight")}
+          onClick={() => onControlClick(cam, "rotateRight")}
         >
           <RotateRight />
         </IconButton>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <IconButton
           color="error"
           style={iconButtonZoomStyle}
-          onClick={() => onControlClick(cam,"zoomOut")}
+          onClick={() => onControlClick(cam, "zoomOut")}
         >
           <ZoomOut />
         </IconButton>
-      </Grid>
-    </Grid>
+        <IconButton
+          style={iconButtonZoomStyle}
+          color="error"
+          onClick={() => onControlClick(cam, "zoomIn")}
+        >
+          <ZoomIn />
+        </IconButton>
+      </div>
+    </div>
   );
 };
 

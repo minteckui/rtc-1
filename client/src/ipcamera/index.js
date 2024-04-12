@@ -1,55 +1,65 @@
-import { useState } from 'react';
-import { styled,  Box, Drawer, List, Divider, IconButton, Switch, ListItem, ListItemText } from '@mui/material';
-import { Menu, ChevronLeft } from '@mui/icons-material';
-import CameraPlayerList from './CameraPlayerList';
+import { useState } from "react";
+import {
+  styled,
+  Box,
+  Drawer,
+  List,
+  Divider,
+  IconButton,
+  Switch,
+  ListItem,
+  ListItemText,
+  Button,
+} from "@mui/material";
+import { Menu, ChevronLeft } from "@mui/icons-material";
+import CameraPlayerList from "./CameraPlayerList";
 
 const drawerWidth = 240;
 
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
+const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
   ({ theme, open }) => ({
     flexGrow: 1,
-    display:'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height:'100%',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "100%",
     paddingInline: theme.spacing(2),
-    transition: theme.transitions.create('margin', {
+    transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
     marginLeft: `-${drawerWidth}px`,
     ...(open && {
-      transition: theme.transitions.create('margin', {
+      transition: theme.transitions.create("margin", {
         easing: theme.transitions.easing.easeOut,
         duration: theme.transitions.duration.enteringScreen,
       }),
       marginLeft: 0,
     }),
-  }),
+  })
 );
 
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
+const DrawerHeader = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
   padding: theme.spacing(0, 1),
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
-  justifyContent: 'flex-end',
+  justifyContent: "flex-end",
 }));
-
 
 export default function IPCamera() {
   const [open, setOpen] = useState(false);
   const [selectedCam, setSelectedCam] = useState([]);
 
   const items = [
-    { id: 1, primary: 'Cam-1', secondary: 'Store Room' },
-    { id: 2, primary: 'Cam-2', secondary: 'Lobby' },
-    { id: 3, primary: 'Cam-3', secondary: 'A Room' },
-    { id: 4, primary: 'Cam-4', secondary: 'B Room' },
-    { id: 5, primary: 'Cam-5', secondary: '13B' },
-    { id: 6, primary: 'Cam-6', secondary: '45A' },
-    { id: 7, primary: 'Cam-7', secondary: '874We' },
+    { id: 1, primary: "Cam-1", secondary: "Store Room" },
+    { id: 2, primary: "Cam-2", secondary: "Lobby" },
+    { id: 3, primary: "Cam-3", secondary: "A Room" },
+    { id: 4, primary: "Cam-4", secondary: "B Room" },
+    { id: 5, primary: "Cam-5", secondary: "13B" },
+    { id: 6, primary: "Cam-6", secondary: "45A" },
+    { id: 7, primary: "Cam-7", secondary: "874We" },
   ];
 
   const handleToggle = (value) => () => {
@@ -74,27 +84,25 @@ export default function IPCamera() {
   };
 
   return (
-    <Box sx={{ display: 'flex',alignItems:'flex-start',height:'100%' }}>
+    <Box sx={{ display: "flex", alignItems: "flex-start", height: "100%" }}>
       <DrawerHeader>
         <IconButton
-          color="inherit"
           aria-label="open drawer"
           onClick={handleDrawerOpen}
           edge="start"
-          sx={{ ml: 2, ...(open && { display: 'none' }) }}
+          sx={{ ml: 2, ...(open && { display: "none" }) }}
         >
           <Menu />
         </IconButton>
       </DrawerHeader>
 
-
       <Drawer
         sx={{
           width: drawerWidth,
           flexShrink: 0,
-          '& .MuiDrawer-paper': {
+          "& .MuiDrawer-paper": {
             width: drawerWidth,
-            boxSizing: 'border-box',
+            boxSizing: "border-box",
           },
         }}
         variant="persistent"
@@ -102,15 +110,26 @@ export default function IPCamera() {
         open={open}
       >
         <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            <ChevronLeft />
-          </IconButton>
+          <Button
+            variant="outlined"
+            startIcon={<ChevronLeft />}
+            onClick={handleDrawerClose}
+          >
+            Close
+          </Button>
         </DrawerHeader>
         <Divider />
-        <List dense style={{ width: '100%' }}>
+        <List dense style={{ width: "100%" }}>
           {items.map((item) => (
-            <ListItem key={item.id} style={{ borderBottom: '1px solid lightgrey', paddingBlock: 0 }}>
-              <ListItemText id={`switch-list-label-${item.id}`} primary={item.primary} secondary={item.secondary} />
+            <ListItem
+              key={item.id}
+              style={{ borderBottom: "1px solid #ffffff1f", paddingBlock: 0 }}
+            >
+              <ListItemText
+                id={`switch-list-label-${item.id}`}
+                primary={item.primary}
+                secondary={item.secondary}
+              />
               <Switch
                 edge="end"
                 onChange={handleToggle(item.id)}
@@ -119,7 +138,6 @@ export default function IPCamera() {
             </ListItem>
           ))}
         </List>
-
       </Drawer>
       <Main open={open}>
         <CameraPlayerList selectedCam={selectedCam} />
@@ -127,4 +145,3 @@ export default function IPCamera() {
     </Box>
   );
 }
-
