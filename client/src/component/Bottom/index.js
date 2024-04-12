@@ -21,20 +21,42 @@ const Bottom = (props) => {
         right: 0,
         mx: "auto",
         width: 300,
-      }}>
-      <Tooltip title={muted ? 'Unmute' : 'Mute'}>
-        <IconButton style={{ backgroundColor: "aqua" }} onClick={toggleAudio}>
-          {muted ? <MicOffIcon fontSize="large" /> : <MicIcon fontSize="large" />}
+      }}
+    >
+      <Tooltip title={muted ? "Unmute" : "Mute"}>
+        <IconButton
+          style={{ backgroundColor: "#8c8bff" }}
+          onClick={toggleAudio}
+        >
+          {muted ? (
+            <MicOffIcon fontSize="large" />
+          ) : (
+            <MicIcon fontSize="large" />
+          )}
         </IconButton>
       </Tooltip>
-      <Tooltip title={handRaise ? 'Lower hand' : 'Raise hand'}>
-        <IconButton style={{ backgroundColor: "aqua" }} onClick={toggleHandRaise}>
-          {handRaise ? <BackHandIcon fontSize="large" /> : <DoNotTouchIcon fontSize="large" />}
+      <Tooltip title={handRaise ? "Lower hand" : "Raise hand"}>
+        <IconButton
+          style={{ backgroundColor: "#d39b7c" }}
+          onClick={toggleHandRaise}
+        >
+          {handRaise ? (
+            <BackHandIcon fontSize="large" />
+          ) : (
+            <DoNotTouchIcon fontSize="large" />
+          )}
         </IconButton>
       </Tooltip>
-      <Tooltip title={playing ? 'Stop video' : 'Start video'}>
-        <IconButton style={{ backgroundColor: "aliceblue" }} onClick={toggleVideo}>
-          {playing ? <VideocamIcon fontSize="large" /> : <VideocamOffIcon fontSize="large" />}
+      <Tooltip title={playing ? "Stop video" : "Start video"}>
+        <IconButton
+          style={{ backgroundColor: "#8c8bff" }}
+          onClick={toggleVideo}
+        >
+          {playing ? (
+            <VideocamIcon fontSize="large" />
+          ) : (
+            <VideocamOffIcon fontSize="large" />
+          )}
         </IconButton>
       </Tooltip>
       <Tooltip title="Leave room">

@@ -57,7 +57,7 @@ export default function MeetLobby() {
   };
   return (
     <HomeContainer>
-      <div style={{ backgroundColor: "aliceblue",padding:'2rem', width:'100%', textAlign:'center',borderRadius:'1rem' }}>
+      <div style={{ padding:'2rem', width:'100%', textAlign:'center',borderRadius:'1rem', border:'1px solid darkgrey' }}>
         <Typography variant="h4" gutterBottom color='secondary' fontWeight={800} align="center">
           Video Call
         </Typography>

@@ -30,12 +30,12 @@ import { ThemeProvider, createTheme } from "@mui/material";
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <IPCamera />
+       {/* <IPCamera /> */}
+    <Routes>
+      <Route path="/" element={<MeetLobby />} />
+      <Route path="/:roomId" element={<MeetRoom />} />
+    </Routes>
     </ThemeProvider>
-    // <Routes>
-    //   <Route path="/" element={<MeetLobby />} />
-    //   <Route path="/:roomId" element={<MeetRoom />} />
-    // </Routes>
   );
 }
 
