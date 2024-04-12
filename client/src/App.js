@@ -6,14 +6,15 @@ import { Routes, Route } from "react-router-dom";
 // import Meeting from "./video/Meeting";
 import MeetLobby from "./meet/MeetLobby";
 import MeetRoom from "./meet/MeetRoom";
+import IPCamera from "./ipcamera";
 
 function App() {
   return (
-    
-    <Routes>
-      <Route path="/" element={<MeetLobby />} />
-      <Route path="/:roomId" element={<MeetRoom />} />
-    </Routes>
+    <IPCamera />
+    // <Routes>
+    //   <Route path="/" element={<MeetLobby />} />
+    //   <Route path="/:roomId" element={<MeetRoom />} />
+    // </Routes>
   );
 }
 
