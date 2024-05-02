@@ -1,6 +1,6 @@
 import React from "react";
 import ReactPlayer from "react-player";
-import { Paper } from "@mui/material";
+import { IconButton, Paper } from "@mui/material";
 import { Mic, MicOff, AccountCircle, RecordVoiceOver } from "@mui/icons-material";
 import PanToolIcon from "@mui/icons-material/PanTool";
 
@@ -14,6 +14,7 @@ const iconsStyle = {
 };
 
 const Player = (props) => {
+  // eslint-disable-next-line no-unused-vars
   const { url, muted, playing, isActive, handRaise, toggleRecording, isRecording } = props;
 
   return (
@@ -24,11 +25,25 @@ const Player = (props) => {
         textAlign: "center",
         height: isActive ? "90vh" : 200,
         backgroundColor: "#272727",
-      }}>
+      }}
+    >
       {playing ? (
-        <ReactPlayer url={url} muted={muted} playing={playing} width="100%" height="100%" />
+        <ReactPlayer
+          url={url}
+          muted={muted}
+          playing={playing}
+          width="100%"
+          height="100%"
+        />
       ) : (
-        <AccountCircle sx={{ fontSize: isActive ? 400 : 100, color: "gray", marginTop: "auto", height: "100%" }} />
+        <AccountCircle
+          sx={{
+            fontSize: isActive ? 400 : 100,
+            color: "gray",
+            marginTop: "auto",
+            height: "100%",
+          }}
+        />
       )}
 
       {!isActive ? (
@@ -38,8 +53,23 @@ const Player = (props) => {
           <Mic fontSize="small" sx={iconsStyle} />
         )
       ) : null}
-      {!isActive && handRaise && <PanToolIcon fontSize="small" sx={{ ...iconsStyle, left: 10 }} />}
-      {!isActive ? !isRecording ? <RecordVoiceOver color="primary" onClick={toggleRecording} fontSize="small" sx={{ ...iconsStyle, left: 0, bottom: 0, right: 0, margin: 'auto', top: 'inherit' }} /> : <RecordVoiceOver color="error" onClick={toggleRecording} fontSize="small" sx={{ ...iconsStyle, left: 0, bottom: 0, right: 0, margin: 'auto', top: 'inherit' }} /> : null}
+      {!isActive && handRaise && (
+        <PanToolIcon fontSize="small" sx={{ ...iconsStyle, left: 10 }} />
+      )}
+      <IconButton onClick={toggleRecording} size="small">
+        <RecordVoiceOver
+          color="primary"
+          fontSize="small"
+          sx={{
+            ...iconsStyle,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            margin: "auto",
+            top: "inherit",
+          }}
+        />
+      </IconButton>
     </Paper>
   );
 };

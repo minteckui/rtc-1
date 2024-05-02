@@ -6,12 +6,12 @@ import { Routes, Route } from "react-router-dom";
 // import Meeting from "./video/Meeting";
 import MeetLobby from "./meet/MeetLobby";
 import MeetRoom from "./meet/MeetRoom";
-import IPCamera from "./ipcamera";
+// import IPCamera from "./ipcamera";
 import { ThemeProvider, createTheme } from "@mui/material";
 
 const theme = createTheme({
   palette: {
-    mode: "dark",
+    mode: "light",
   },
   components: {
     MuiButton: {
@@ -30,11 +30,11 @@ const theme = createTheme({
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <IPCamera />
-      {/* <Routes>
+      {/* <IPCamera /> */}
+     <Routes>
       <Route path="/" element={<MeetLobby />} />
       <Route path="/:roomId" element={<MeetRoom />} />
-    </Routes> */}
+    </Routes>
     </ThemeProvider>
   );
 }

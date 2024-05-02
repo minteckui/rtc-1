@@ -4,8 +4,7 @@ import io from 'socket.io-client';
 const SocketContext = createContext();
 
 export const useSocket = () => {
-  const socket = useContext(SocketContext)
-  return socket
+  return  useContext(SocketContext)
 }
 
 const socket = io('http://172.16.68.224:8000'); // Replace with your server URL

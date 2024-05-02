@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   styled,
   Box,
@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { Menu, ChevronLeft, Videocam } from "@mui/icons-material";
 import CameraPlayerList from "./CameraPlayerList";
+import { useSocket } from "../context";
 
 const drawerWidth = 240;
 
@@ -50,24 +51,40 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
 }));
 
+const items = [
+  {
+    id: 1,
+    title: "Cam-1",
+    location: "Store Room",
+    url: "http://example.com",
+  },
+  { id: 2, title: "Cam-2", location: "Lobby", url: "http://example.com" },
+  { id: 3, title: "Cam-3", location: "A Room", url: "http://example.com" },
+  { id: 4, title: "Cam-4", location: "B Room", url: "http://example.com" },
+  { id: 5, title: "Cam-5", location: "13B", url: "http://example.com" },
+  { id: 6, title: "Cam-6", location: "45A", url: "http://example.com" },
+  { id: 7, title: "Cam-7", location: "874We", url: "http://example.com" },
+];
+
 export default function IPCamera() {
+  const socket = useSocket();
   const [open, setOpen] = useState(false);
   const [selectedCam, setSelectedCam] = useState([]);
 
-  const items = [
-    {
-      id: 1,
-      title: "Cam-1",
-      location: "Store Room",
-      url: "http://example.com",
-    },
-    { id: 2, title: "Cam-2", location: "Lobby", url: "http://example.com" },
-    { id: 3, title: "Cam-3", location: "A Room", url: "http://example.com" },
-    { id: 4, title: "Cam-4", location: "B Room", url: "http://example.com" },
-    { id: 5, title: "Cam-5", location: "13B", url: "http://example.com" },
-    { id: 6, title: "Cam-6", location: "45A", url: "http://example.com" },
-    { id: 7, title: "Cam-7", location: "874We", url: "http://example.com" },
-  ];
+ useEffect(() => {
+
+   socket.on("connect", () => {
+     console.log("Connected to server");
+   });
+
+   socket.on("disconnect", () => {
+     console.log("Disconnected from server");
+   });
+
+   return () => {
+     socket.disconnect(); // Disconnect from Socket.IO server on component unmount
+   };
+ }, [socket]);
 
   const handleToggle = (value) => () => {
     const currentIndex = selectedCam.indexOf(value);
@@ -127,39 +144,42 @@ export default function IPCamera() {
         </DrawerHeader>
         <Divider />
         <List dense style={{ width: "100%" }}>
-          {items.map((item) => (
-            <ListItem
-              key={item.id}
-              style={{ borderBottom: "1px solid #ffffff1f", paddingBlock: 0 }}
-            >
-              <ListItemIcon style={{ minWidth: 36 }}>
-                <Videocam color="info" />
-              </ListItemIcon>
-              <ListItemText
-                style={{ paddingBlock: 0 }}
-                primary={
-                  <Typography variant="subtitle1" color="salmon">
-                    {item.title}
-                  </Typography>
-                }
-                secondary={
-                  <Typography variant="caption" color="primary">
-                    {item.location}
-                  </Typography>
-                }
-              />
-              <Switch
-                size="small"
-                edge="end"
-                onChange={handleToggle(item.id)}
-                checked={selectedCam.indexOf(item.id) !== -1}
-              />
-            </ListItem>
-          ))}
+          {items.map((item) => {
+            const isSelected = selectedCam.indexOf(item.id) !== -1;
+            return (
+              <ListItem
+                key={item.id}
+                style={{ borderBottom: "1px solid #ffffff1f", paddingBlock: 0 }}
+              >
+                <ListItemIcon style={{ minWidth: 36 }}>
+                  <Videocam color={isSelected ? "info" : "action"} />
+                </ListItemIcon>
+                <ListItemText
+                  style={{ paddingBlock: 0 }}
+                  primary={
+                    <Typography variant="subtitle1" color="salmon">
+                      {item.title}
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography variant="caption" color="primary">
+                      {item.location}
+                    </Typography>
+                  }
+                />
+                <Switch
+                  size="small"
+                  edge="end"
+                  onChange={handleToggle(item.id)}
+                  checked={isSelected}
+                />
+              </ListItem>
+            );
+          })}
         </List>
       </Drawer>
       <Main open={open}>
-        <CameraPlayerList selectedCam={selectedCam} />
+        <CameraPlayerList selectedCam={selectedCam}  />
       </Main>
     </Box>
   );

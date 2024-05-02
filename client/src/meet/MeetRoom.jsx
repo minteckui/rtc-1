@@ -7,19 +7,20 @@ import { AccountCircle } from "@mui/icons-material";
 
 import { useSocket } from "../context";
 import usePeer from "../hooks/usePeer";
-import useMediaStream, { useVideoRecorder} from "../hooks/useMediaStream";
+import useMediaStream from "../hooks/useMediaStream";
 import usePlayer from "../hooks/usePlayer";
 
 import Player from "../component/Player";
 import Bottom from "../component/Bottom";
 import { useParams } from "react-router-dom";
+import { useVideoRecorder } from "../hooks/useRecorderStream";
 
 const MeetRoom = () => {
   const socket = useSocket();
   const { roomId } = useParams();
   const { peer, myId } = usePeer();
   const { stream } = useMediaStream();
-  const { initRecording, isRecording } = useVideoRecorder();
+  const { toggleVideoStreamRecording, isRecording } = useVideoRecorder(stream);
   const {
     players,
     setPlayers,
@@ -41,24 +42,6 @@ const MeetRoom = () => {
 
       const call = peer.call(newUser, stream);
       if (call) {
-        call.on("stream", (incomingStream) => {
-          console.log(`incoming stream from ${newUser}`);
-          setPlayers((prev) => ({
-            ...prev,
-            [newUser]: {
-              url: incomingStream,
-              muted: true,
-              playing: true,
-              handRaise: false,
-            },
-          }));
-
-          setUsers((prev) => ({
-            ...prev,
-            [newUser]: call,
-          }));
-        });
-
         call.on("stream", (incomingStream) => {
           console.log(`incoming stream from ${newUser}`);
           setPlayers((prev) => ({
@@ -139,15 +122,15 @@ const MeetRoom = () => {
     socket.on("user-toggle-video", handleToggleVideo);
     socket.on("user-toggle-hand-raise", handleHandRaise);
     socket.on("user-leave", handleUserLeave);
-    socket.on("toggle-video-recording", initRecording);
+    socket.on("toggle-video-recording", toggleVideoStreamRecording);
     return () => {
       socket.off("user-toggle-audio", handleToggleAudio);
       socket.off("user-toggle-video", handleToggleVideo);
       socket.off("user-toggle-hand-raise", handleHandRaise);
       socket.off("user-leave", handleUserLeave);
-      socket.off("toggle-video-recording", initRecording);
+      socket.off("toggle-video-recording", toggleVideoStreamRecording);
     };
-  }, [players, setPlayers, socket, initRecording, users]);
+  }, [players, setPlayers, socket, toggleVideoStreamRecording, users]);
 
   useEffect(() => {
     if (!peer) return;
@@ -190,11 +173,13 @@ const MeetRoom = () => {
     }));
   }, [myId, setPlayers, stream]);
 
+  console.log(playerHighlighted, nonHighlightedPlayers);
+
   return (
     <Box display="flex" justifyContent="center">
       <Grid container spacing={2}>
         <Grid item xs={8}>
-          <Typography color="white" variant="h5" gutterBottom>
+          <Typography variant="h5" gutterBottom>
             Main Video
           </Typography>
           <Box>
@@ -205,6 +190,9 @@ const MeetRoom = () => {
                   muted={playerHighlighted.muted}
                   playing={playerHighlighted.playing}
                   handRaise={playerHighlighted.handRaise}
+                  toggleRecording={() => {
+                    toggleRecording();
+                  }}
                   isActive
                 />
                 <Bottom
@@ -240,7 +228,7 @@ const MeetRoom = () => {
           </Box>
         </Grid>
         <Grid item xs={4}>
-          <Typography variant="h5" gutterBottom color="whitesmoke">
+          <Typography variant="h5" gutterBottom>
             Other Participants
           </Typography>
           <div style={{ height: "calc(100vh - 80px)", overflow: "auto" }}>
@@ -255,7 +243,9 @@ const MeetRoom = () => {
                   playing={playing}
                   handRaise={handRaise}
                   isActive={false}
-                  toggleRecording={() => toggleRecording(playerId)}
+                  toggleRecording={()=>
+                    toggleRecording()
+                  }
                   isRecording={isRecording}
                 />
               );
