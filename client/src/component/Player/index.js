@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactPlayer from "react-player";
-import { IconButton, Paper } from "@mui/material";
-import { Mic, MicOff, AccountCircle, RecordVoiceOver } from "@mui/icons-material";
+import { Button, Paper } from "@mui/material";
+import { Mic, MicOff, AccountCircle } from "@mui/icons-material";
 import PanToolIcon from "@mui/icons-material/PanTool";
 
 const iconsStyle = {
@@ -14,8 +14,16 @@ const iconsStyle = {
 };
 
 const Player = (props) => {
-  // eslint-disable-next-line no-unused-vars
-  const { url, muted, playing, isActive, handRaise, toggleRecording, isRecording } = props;
+  const {
+    url,
+    muted,
+    playing,
+    isActive,
+    handRaise,
+    toggleRecording,
+    isRecording,
+  } = props;
+  const [recodingStated, setRecordingStared] = useState(false);
 
   return (
     <Paper
@@ -27,6 +35,7 @@ const Player = (props) => {
         backgroundColor: "#272727",
       }}
     >
+      {isRecording && <p style={{ color: "red" }}> Video is getting recoded</p>}
       {playing ? (
         <ReactPlayer
           url={url}
@@ -56,20 +65,18 @@ const Player = (props) => {
       {!isActive && handRaise && (
         <PanToolIcon fontSize="small" sx={{ ...iconsStyle, left: 10 }} />
       )}
-      <IconButton onClick={toggleRecording} size="small">
-        <RecordVoiceOver
-          color="primary"
-          fontSize="small"
-          sx={{
-            ...iconsStyle,
-            left: 0,
-            bottom: 0,
-            right: 0,
-            margin: "auto",
-            top: "inherit",
+      {!isActive && playing && (
+        <Button
+          color="warning"
+          onClick={() => {
+            setRecordingStared((ps) => !ps);
+            toggleRecording();
           }}
-        />
-      </IconButton>
+          size="small"
+        >
+          {recodingStated ? "Stop Recording" : "Start Recoding"}
+        </Button>
+      )}
     </Paper>
   );
 };

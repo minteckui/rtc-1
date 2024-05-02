@@ -41,9 +41,27 @@ const MeetRoom = () => {
       console.log(`user connected in room with userId ${newUser}`);
 
       const call = peer.call(newUser, stream);
+      console.log("calling...", call);
+
       if (call) {
+        // if there is no streams
+        setPlayers((prev) => ({
+          ...prev,
+          [newUser]: {
+            url: "",
+            muted: true,
+            playing: false,
+            handRaise: false,
+          },
+        }));
+
+        setUsers((prev) => ({
+          ...prev,
+          [newUser]: call,
+        }));
+
         call.on("stream", (incomingStream) => {
-          console.log(`incoming stream from ${newUser}`);
+          console.log(`incoming stream from (calling) ${newUser}`);
           setPlayers((prev) => ({
             ...prev,
             [newUser]: {
@@ -137,6 +155,7 @@ const MeetRoom = () => {
     peer.on("call", (call) => {
       const { peer: callerId } = call;
       call.answer(stream);
+      console.log("answering the call...", call);
       if (call) {
         call.on("stream", (incomingStream) => {
           console.log(`incoming stream from ${callerId}`);
@@ -243,9 +262,7 @@ const MeetRoom = () => {
                   playing={playing}
                   handRaise={handRaise}
                   isActive={false}
-                  toggleRecording={()=>
-                    toggleRecording()
-                  }
+                  toggleRecording={() => toggleRecording()}
                   isRecording={isRecording}
                 />
               );

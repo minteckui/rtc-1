@@ -9,10 +9,11 @@ export const useVideoRecorder = (stream) => {
   const [isRecording, setIsRecording] = useState(false);
 
   async function toggleVideoStreamRecording() {
-    console.log('started')
+    console.log("started");
     if (mediaRecorder && isRecording) {
       mediaRecorder.stop();
       setIsRecording(false);
+      socket.emit("endVideoChunks");
       return;
     }
 

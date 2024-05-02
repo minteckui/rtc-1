@@ -5,16 +5,15 @@ const io = new Server(8000, {
 });
 
 const videoChunksDir = "videos"; // Directory to store video chunks
-const mergedFilePath = `${videoChunksDir}/video_${Date.now()}.mp4`; // Path for merged chunks file
+let mergedFilePath // Path for merged chunks file
 
 // Create directory if it doesn't exist
 if (!fs.existsSync(videoChunksDir)) {
   fs.mkdirSync(videoChunksDir);
 }
 
-function appendChunkToFile(chunk) {
-  fs.appendFileSync(mergedFilePath, chunk);
-}
+let fileWriteStream = null;
+
 
 const mapUserPeerIdToSocketId = new Map();
 // let fileWriteStream = null;
@@ -48,6 +47,7 @@ io.on("connection", (socket) => {
 
   socket.on("toggle-video-recording", (userId, roomId, playerId) => {
     console.log("toggle-video-recording");
+    mergedFilePath = `${videoChunksDir}/video_${Date.now()}.mp4`
     socket.to(roomId).emit("toggle-video-recording", userId);
     // const socketId = mapUserPeerIdToSocketId.get(playerId);
     // if (socketId) {
@@ -55,8 +55,18 @@ io.on("connection", (socket) => {
     // }
   });
 
-  socket.on("videoChunks", (data) => {
-    console.log(data, "chunks");
-    appendChunkToFile(data);
+   socket.on("videoChunks", (data) => {
+    if (!fileWriteStream) {
+      fileWriteStream = fs.createWriteStream(mergedFilePath);
+    }
+    fileWriteStream.write(data);
+  });
+
+  socket.on("endVideoChunks", () => {
+    if (fileWriteStream) {
+      fileWriteStream.end();
+      fileWriteStream = null;
+    }
+    console.log("Video saved:", mergedFilePath);
   });
 });
