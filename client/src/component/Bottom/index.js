@@ -8,7 +8,7 @@ import BackHandIcon from '@mui/icons-material/BackHand';
 import DoNotTouchIcon from '@mui/icons-material/DoNotTouch';
 
 const Bottom = (props) => {
-  const { muted, playing, toggleAudio, toggleVideo, leaveRoom,handRaise,toggleHandRaise } = props;
+  const { muted, playing, toggleAudio, toggleVideo, leaveRoom, handRaise,toggleHandRaise } = props;
 
   return (
     <Box

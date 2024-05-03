@@ -8,14 +8,8 @@ export const useVideoRecorder = (stream) => {
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
 
-  async function toggleVideoStreamRecording() {
-    console.log("started");
-    if (mediaRecorder && isRecording) {
-      mediaRecorder.stop();
-      setIsRecording(false);
-      socket.emit("endVideoChunks");
-      return;
-    }
+  async function startVideoRecording() {
+    console.log("started...");
 
     try {
       const recorder = new MediaRecorder(stream);
@@ -35,6 +29,13 @@ export const useVideoRecorder = (stream) => {
     }
   }
 
+  async function stopVideoRecording() {
+    console.log("stopped...");
+    mediaRecorder.stop();
+    setIsRecording(false);
+    socket.emit("endVideoChunks");
+  }
+
   useEffect(() => {
     return () => {
       if (mediaRecorder && mediaRecorder.state === "recording") {
@@ -42,5 +43,5 @@ export const useVideoRecorder = (stream) => {
       }
     };
   });
-  return { toggleVideoStreamRecording, isRecording };
+  return { startVideoRecording, stopVideoRecording, isRecording };
 };

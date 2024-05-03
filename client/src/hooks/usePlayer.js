@@ -3,7 +3,7 @@ import { cloneDeep } from "lodash";
 import { useSocket } from "../context";
 import { useNavigate } from "react-router-dom";
 
-const usePlayer = (myId, roomId, peer, ) => {
+const usePlayer = (myId, roomId, peer) => {
   const socket = useSocket();
   const [players, setPlayers] = useState({});
   const navigate = useNavigate();
@@ -12,7 +12,7 @@ const usePlayer = (myId, roomId, peer, ) => {
   const playerHighlighted = playersCopy[myId];
   delete playersCopy[myId];
 
-  console.log(players)
+  console.log(players);
 
   const nonHighlightedPlayers = playersCopy;
 
@@ -53,12 +53,28 @@ const usePlayer = (myId, roomId, peer, ) => {
     socket.emit("user-toggle-video", myId, roomId);
   };
 
-  const toggleRecording = (playerId) => {
-    console.log("i toggle video recording from", myId);
-    socket.emit("toggle-video-recording", myId, roomId, playerId);
+  const startRecording = (playerId) => {
+    console.log("i start video recording from", myId);
+    socket.emit("start-video-recording", myId, roomId, playerId);
   };
 
-  return { players, setPlayers, playerHighlighted, nonHighlightedPlayers, toggleAudio, toggleHandRaise, toggleVideo, leaveRoom, toggleRecording };
+  const stopRecording = (playerId) => {
+    console.log("i stopped video recording from", myId);
+    socket.emit("stop-video-recording", myId, roomId, playerId);
+  };
+
+  return {
+    players,
+    setPlayers,
+    playerHighlighted,
+    nonHighlightedPlayers,
+    toggleAudio,
+    toggleHandRaise,
+    toggleVideo,
+    leaveRoom,
+    startRecording,
+    stopRecording,
+  };
 };
 
 export default usePlayer;

@@ -20,7 +20,8 @@ const MeetRoom = () => {
   const { roomId } = useParams();
   const { peer, myId } = usePeer();
   const { stream } = useMediaStream();
-  const { toggleVideoStreamRecording, isRecording } = useVideoRecorder(stream);
+  const { startVideoRecording, stopVideoRecording, isRecording } =
+    useVideoRecorder(stream);
   const {
     players,
     setPlayers,
@@ -30,7 +31,9 @@ const MeetRoom = () => {
     toggleHandRaise,
     toggleVideo,
     leaveRoom,
-    toggleRecording,
+    startRecording,
+    stopRecording,
+    // toggleRecording,
   } = usePlayer(myId, roomId, peer);
 
   const [users, setUsers] = useState([]);
@@ -140,15 +143,24 @@ const MeetRoom = () => {
     socket.on("user-toggle-video", handleToggleVideo);
     socket.on("user-toggle-hand-raise", handleHandRaise);
     socket.on("user-leave", handleUserLeave);
-    socket.on("toggle-video-recording", toggleVideoStreamRecording);
+    socket.on("start-video-recording", startVideoRecording);
+    socket.on("stop-video-recording", stopVideoRecording);
     return () => {
       socket.off("user-toggle-audio", handleToggleAudio);
       socket.off("user-toggle-video", handleToggleVideo);
       socket.off("user-toggle-hand-raise", handleHandRaise);
       socket.off("user-leave", handleUserLeave);
-      socket.off("toggle-video-recording", toggleVideoStreamRecording);
+      socket.off("start-video-recording", startVideoRecording);
+      socket.off("stop-video-recording", stopVideoRecording);
     };
-  }, [players, setPlayers, socket, toggleVideoStreamRecording, users]);
+  }, [
+    players,
+    setPlayers,
+    socket,
+    startVideoRecording,
+    stopVideoRecording,
+    users,
+  ]);
 
   useEffect(() => {
     if (!peer) return;
@@ -209,8 +221,11 @@ const MeetRoom = () => {
                   muted={playerHighlighted.muted}
                   playing={playerHighlighted.playing}
                   handRaise={playerHighlighted.handRaise}
-                  toggleRecording={() => {
-                    toggleRecording();
+                  startRecording={() => {
+                    startRecording();
+                  }}
+                  stopRecording={() => {
+                    stopRecording();
                   }}
                   isActive
                 />
@@ -262,7 +277,12 @@ const MeetRoom = () => {
                   playing={playing}
                   handRaise={handRaise}
                   isActive={false}
-                  toggleRecording={() => toggleRecording()}
+                  startRecording={() => {
+                    startRecording();
+                  }}
+                  stopRecording={() => {
+                    stopRecording();
+                  }}
                   isRecording={isRecording}
                 />
               );

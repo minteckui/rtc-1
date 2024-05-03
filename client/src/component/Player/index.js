@@ -20,7 +20,9 @@ const Player = (props) => {
     playing,
     isActive,
     handRaise,
-    toggleRecording,
+    startRecording,
+    stopRecording,
+    // toggleRecording,
     isRecording,
   } = props;
   const [recodingStated, setRecordingStared] = useState(false);
@@ -70,7 +72,11 @@ const Player = (props) => {
           color="warning"
           onClick={() => {
             setRecordingStared((ps) => !ps);
-            toggleRecording();
+            if (recodingStated) {
+              stopRecording();
+            } else {
+              startRecording();
+            }
           }}
           size="small"
         >
